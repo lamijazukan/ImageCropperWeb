@@ -1,0 +1,25 @@
+BEGIN TRY
+
+BEGIN TRAN;
+
+-- CreateTable
+CREATE TABLE [dbo].[Configuration] (
+    [id] INT NOT NULL IDENTITY(1,1),
+    [scaleDown] FLOAT(53) NOT NULL,
+    [logoPosition] NVARCHAR(1000) NOT NULL,
+    [createdAt] DATETIME2 NOT NULL CONSTRAINT [Configuration_createdAt_df] DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT [Configuration_pkey] PRIMARY KEY CLUSTERED ([id])
+);
+
+COMMIT TRAN;
+
+END TRY
+BEGIN CATCH
+
+IF @@TRANCOUNT > 0
+BEGIN
+    ROLLBACK TRAN;
+END;
+THROW
+
+END CATCH
