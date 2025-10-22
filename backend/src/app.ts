@@ -3,6 +3,7 @@ import cors from "cors";
 import morgan from "morgan";
 import routes from "./routes";
 import { setupSwagger } from "./config/swagger";
+import { errorHandler } from "./middlewares/errorHandlingMiddleware";
 
 const app = express();
 
@@ -22,5 +23,6 @@ app.use(express.json());
 setupSwagger(app);
 
 app.use("/api", routes);
+app.use(errorHandler);
 
 export default app;
