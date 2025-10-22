@@ -1,9 +1,13 @@
 import express from "express";
 import cors from "cors";
+import morgan from "morgan";
 import routes from "./routes";
 import { setupSwagger } from "./config/swagger";
 
 const app = express();
+
+// Logging middleware
+app.use(morgan("dev"));
 
 app.use(
   cors({
