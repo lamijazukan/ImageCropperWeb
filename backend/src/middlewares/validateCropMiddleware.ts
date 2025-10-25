@@ -28,11 +28,8 @@ export function validateCrop(
     }
 
     const values = [crop.x, crop.y, crop.width, crop.height];
-    if (values.some((v) => isNaN(Number(v)) || Number(v) < 0)) {
-      throw new AppError(
-        "All crop values must be valid non-negative numbers",
-        400
-      );
+    if (values.some((v) => Number(v) <= 0)) {
+      throw new AppError("All crop values must be positive numbers", 400);
     }
 
     next();

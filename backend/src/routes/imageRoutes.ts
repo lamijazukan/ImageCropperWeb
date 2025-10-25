@@ -48,7 +48,7 @@ router.post(
  * @swagger
  * /image/generate:
  *   post:
- *     operationId: preview
+ *     operationId: generate
  *     tags:
  *       - image
  *     requestBody:
@@ -77,6 +77,7 @@ router.post(
  *       200:
  *         description: Cropped image preview in PNG format
  */
+
 router.post(
   "/image/generate",
   upload.single("image"),
