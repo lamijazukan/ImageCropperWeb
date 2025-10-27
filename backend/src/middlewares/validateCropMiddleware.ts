@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import { AppError } from "../utils/AppError";
-import { ImageCropRequest } from "../types/request";
+import { ImageCropRequest } from "../types/requests";
 
 export function validateCrop(
   req: ImageCropRequest,
@@ -10,6 +10,9 @@ export function validateCrop(
   try {
     if (typeof req.body.crop === "string") {
       req.body.crop = JSON.parse(req.body.crop);
+    }
+    if (!req.file) {
+      throw new AppError("No image uploaded", 400);
     }
 
     const { crop } = req.body;
