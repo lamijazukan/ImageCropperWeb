@@ -1,19 +1,15 @@
 import sharp from "sharp";
 import fs from "fs/promises";
 import asyncHandler from "express-async-handler";
-import { ImageCropRequest } from "../types/request";
+import { ImageCropRequest } from "../types/requests";
 import { AppError } from "../utils/AppError";
 
 // /preview
 export const previewImage = asyncHandler(
   async (req: ImageCropRequest, res, next) => {
-    if (!req.file) {
-      throw new AppError("No image uploaded", 400);
-    }
-
     const { crop } = req.body;
 
-    const croppedBuffer = await sharp(req.file.path)
+    const croppedBuffer = await sharp(req.file!.path)
       .extract({
         left: crop.x,
         top: crop.y,
@@ -27,7 +23,7 @@ export const previewImage = asyncHandler(
       .png()
       .toBuffer();
 
-    await fs.unlink(req.file.path); // cleanup
+    await fs.unlink(req.file!.path); // cleanup
 
     res.set("Content-Type", "image/png");
     res.status(200).send(croppedBuffer);
