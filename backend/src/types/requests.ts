@@ -5,7 +5,7 @@ export interface ImageCropRequest extends Request {
   file?: Express.Multer.File | undefined;
   body: {
     crop: CropCoordinates;
-    configId?: string; //optional default will be used if not provided
+    configId?: string; // Optional ID of logo configuration to apply
   };
 }
 

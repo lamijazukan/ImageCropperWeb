@@ -73,6 +73,9 @@ router.post(
  *                   y: { type: number }
  *                   width: { type: number }
  *                   height: { type: number }
+ *               configId:
+ *                 type: string
+ *                 description: Optional ID of logo configuration to apply
  *     responses:
  *       200:
  *         description: Cropped image preview in PNG format
