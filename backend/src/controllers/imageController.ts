@@ -2,14 +2,15 @@ import sharp from "sharp";
 import fs from "fs/promises";
 import asyncHandler from "express-async-handler";
 import { ImageCropRequest } from "../types/requests";
-import { AppError } from "../utils/AppError";
+import { prisma } from "../prisma-client";
+import { gravityMap } from "../utils/sharpGravityMapper";
 
 // /preview
 export const previewImage = asyncHandler(
   async (req: ImageCropRequest, res, next) => {
     const { crop } = req.body;
 
-    const croppedBuffer = await sharp(req.file!.path)
+    const croppedImage = await sharp(req.file!.path)
       .extract({
         left: crop.x,
         top: crop.y,
@@ -26,7 +27,7 @@ export const previewImage = asyncHandler(
     await fs.unlink(req.file!.path); // cleanup
 
     res.set("Content-Type", "image/png");
-    res.status(200).send(croppedBuffer);
+    res.status(200).send(croppedImage);
   }
 );
 
@@ -34,13 +35,9 @@ export const previewImage = asyncHandler(
 
 export const generateImage = asyncHandler(
   async (req: ImageCropRequest, res, next) => {
-    if (!req.file) {
-      throw new AppError("No image uploaded", 400);
-    }
-
     const { crop } = req.body;
 
-    const croppedBuffer = await sharp(req.file.path)
+    let croppedImage = await sharp(req.file!.path)
       .extract({
         left: crop.x,
         top: crop.y,
@@ -50,9 +47,28 @@ export const generateImage = asyncHandler(
       .png()
       .toBuffer();
 
-    await fs.unlink(req.file.path); // cleanup
+    await fs.unlink(req.file!.path); // cleanup
+
+    const { configId } = req.body;
+
+    const config = configId
+      ? await prisma.configuration.findUnique({ where: { id: configId } })
+      : null;
+
+    if (config?.logoImage) {
+      const logo = await sharp(config.logoImage)
+        .resize({
+          width: Math.round(crop.width * config.scaleDown),
+          height: Math.round(crop.height * config.scaleDown),
+        })
+        .toBuffer();
+
+      croppedImage = await sharp(croppedImage)
+        .composite([{ input: logo, gravity: gravityMap[config.logoPosition] }])
+        .toBuffer();
+    }
 
     res.set("Content-Type", "image/png");
-    res.status(200).send(croppedBuffer);
+    res.status(200).send(croppedImage);
   }
 );
