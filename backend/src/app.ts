@@ -5,6 +5,7 @@ import morgan from "morgan";
 import routes from "./routes";
 import { setupSwagger } from "./config/swagger";
 import imageRoutes from "./routes/imageRoutes";
+import configRoutes from "./routes/configRoutes";
 import { errorHandler } from "./middlewares/errorHandlingMiddleware";
 
 const app = express();
@@ -27,6 +28,7 @@ setupSwagger(app);
 
 app.use("/api", routes);
 app.use("/api", imageRoutes);
+app.use("/api", configRoutes);
 
 //Error handler registery
 app.use(errorHandler);
