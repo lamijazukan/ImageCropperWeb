@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import { AppError } from "../utils/AppError";
 import { ImageCropRequest } from "../types/requests";
+import { CropCoordinates } from "../types/crop-data";
 
 export function validateCrop(
   req: ImageCropRequest,
@@ -14,34 +15,26 @@ export function validateCrop(
     if (!req.file) {
       throw new AppError("No image uploaded", 400);
     }
-
-    const { crop } = req.body;
-
-    // Check individual properties exist
+    const crop = req.body.crop;
+    const { x, y, width, height } = req.body.crop;
     if (
-      crop.x === undefined ||
-      crop.y === undefined ||
-      crop.width === undefined ||
-      crop.height === undefined
+      ["x", "y", "width", "height"].some(
+        (v) => crop[v as keyof CropCoordinates] === undefined
+      )
     ) {
-      throw new AppError(
-        "All crop values (x, y, width, height) must be provided",
-        400
-      );
+      throw new AppError("Missing crop values: x, y, width, height", 400);
     }
 
-    const values = [crop.x, crop.y, crop.width, crop.height];
-    if (values.some((v) => Number(v) <= 0)) {
-      throw new AppError("All crop values must be positive numbers", 400);
+    if ([x, y, width, height].some((v) => Number(v) <= 0)) {
+      throw new AppError("Crop values must be positive numbers", 400);
     }
 
     next();
   } catch (err) {
-    // Only catch JSON.parse errors specifically
-    if (err instanceof SyntaxError) {
-      next(new AppError("Invalid crop JSON format", 400));
-    } else {
-      next(err);
-    }
+    next(
+      err instanceof SyntaxError
+        ? new AppError("Invalid crop JSON format", 400)
+        : err
+    );
   }
 }

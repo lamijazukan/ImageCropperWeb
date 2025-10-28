@@ -1,5 +1,4 @@
 import asyncHandler from "express-async-handler";
-import { AppError } from "../utils/AppError";
 import {
   ConfigurationRequest,
   UpdateConfigurationRequest,
@@ -11,14 +10,13 @@ import {
 import { UpdateConfigurationData } from "../types/config-data";
 
 export const createConfig = asyncHandler(
-  async (req: ConfigurationRequest, res, next) => {
+  async (req: ConfigurationRequest, res) => {
     const { scaleDown, logoPosition } = req.body;
-    const logoImage = req.file!.path;
 
     const newConfig = await createConfiguration({
       scaleDown,
       logoPosition,
-      logoImage,
+      logoImage: req.file!.path,
     });
 
     res.status(201).json(newConfig);
@@ -26,26 +24,19 @@ export const createConfig = asyncHandler(
 );
 
 export const updateConfig = asyncHandler(
-  async (req: UpdateConfigurationRequest, res, next) => {
+  async (req: UpdateConfigurationRequest, res) => {
     const { id } = req.params;
     const { scaleDown, logoPosition } = req.body;
 
     // Check if configuration exists
-    const updateData: UpdateConfigurationData = { id };
-
-    if (scaleDown !== undefined) {
-      updateData.scaleDown = scaleDown;
-    }
-
-    if (logoPosition !== undefined) {
-      updateData.logoPosition = logoPosition;
-    }
-
-    if (req.file) {
-      updateData.logoImage = req.file.path;
-    }
+    const updateData: UpdateConfigurationData = {
+      id,
+      ...(scaleDown !== undefined && { scaleDown }),
+      ...(logoPosition !== undefined && { logoPosition }),
+      ...(req.file && { logoImage: req.file.path }),
+    };
 
     const updatedConfig = await updateConfiguration(updateData);
-    res.status(200).json(updatedConfig);
+    res.json(updatedConfig);
   }
 );

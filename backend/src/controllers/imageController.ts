@@ -8,26 +8,26 @@ import { gravityMap } from "../utils/sharpGravityMapper";
 // /preview
 export const previewImage = asyncHandler(
   async (req: ImageCropRequest, res, next) => {
-    const { crop } = req.body;
+    const { x, y, width, height } = req.body.crop;
+    const image = req.file!.path;
 
-    const croppedImage = await sharp(req.file!.path)
+    const croppedImage = await sharp(image)
       .extract({
-        left: crop.x,
-        top: crop.y,
-        width: crop.width,
-        height: crop.height,
+        left: x,
+        top: y,
+        width: width,
+        height: height,
       })
       .resize({
-        width: Math.floor(crop.width * 0.05),
-        height: Math.floor(crop.height * 0.05),
+        width: Math.floor(width * 0.05),
+        height: Math.floor(height * 0.05),
       })
       .png()
       .toBuffer();
 
-    await fs.unlink(req.file!.path); // cleanup
+    await fs.unlink(image);
 
-    res.set("Content-Type", "image/png");
-    res.status(200).send(croppedImage);
+    res.type("image/png").send(croppedImage);
   }
 );
 
@@ -35,19 +35,20 @@ export const previewImage = asyncHandler(
 
 export const generateImage = asyncHandler(
   async (req: ImageCropRequest, res, next) => {
-    const { crop } = req.body;
+    const { x, y, width, height } = req.body.crop;
+    const image = req.file!.path;
 
-    let croppedImage = await sharp(req.file!.path)
+    let croppedImage = await sharp(image)
       .extract({
-        left: crop.x,
-        top: crop.y,
-        width: crop.width,
-        height: crop.height,
+        left: x,
+        top: y,
+        width: width,
+        height: height,
       })
       .png()
       .toBuffer();
 
-    await fs.unlink(req.file!.path); // cleanup
+    await fs.unlink(image);
 
     const { configId } = req.body;
 
@@ -58,8 +59,8 @@ export const generateImage = asyncHandler(
     if (config?.logoImage) {
       const logo = await sharp(config.logoImage)
         .resize({
-          width: Math.round(crop.width * config.scaleDown),
-          height: Math.round(crop.height * config.scaleDown),
+          width: Math.round(width * config.scaleDown),
+          height: Math.round(height * config.scaleDown),
         })
         .toBuffer();
 
@@ -68,7 +69,6 @@ export const generateImage = asyncHandler(
         .toBuffer();
     }
 
-    res.set("Content-Type", "image/png");
-    res.status(200).send(croppedImage);
+    res.type("image/png").send(croppedImage);
   }
 );
