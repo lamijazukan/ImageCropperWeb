@@ -8,12 +8,10 @@ const options: swaggerJSDoc.Options = {
     info: {
       title: "Image Cropper API",
       version: "1.0.0",
-      
     },
     servers: [
       {
         url: "http://localhost:5001/api",
-        description: "Local server",
       },
     ],
   },

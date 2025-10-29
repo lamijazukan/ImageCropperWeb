@@ -9,9 +9,4 @@ const api = axios.create({
   withCredentials: false,
 });
 
-export const getTestMessage = async () => {
-  const response = await api.get("/");
-  return response.data; // returns "Hello from Express + Swagger + TypeScript 👋"
-};
-
 export default api;

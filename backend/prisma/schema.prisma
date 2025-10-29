@@ -15,9 +15,10 @@ datasource db {
 }
 
 model Configuration {
-  id           Int     @id @default(autoincrement())
+  id           String      @id @default(cuid())
   scaleDown    Float
   logoPosition String
+  logoImage    String
   createdAt    DateTime @default(now())
- 
-}
+  updatedAt    DateTime @updatedAt
+} 
