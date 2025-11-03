@@ -1,6 +1,6 @@
-# Image Cropper API
+# Image Cropper Web
 
-This repository contains the backend of the Image Cropper project, built with Node.js, Express, TypeScript, and Prisma ORM with SQL Server. The backend exposes REST APIs for uploading, cropping images, and managing logo overlay configurations. The frontend is under development.
+A full-stack image cropping application with a React frontend and Node.js/Express backend, supporting interactive image cropping and logo overlay.
 
 ## Setup Instructions
 
@@ -8,45 +8,38 @@ This repository contains the backend of the Image Cropper project, built with No
 
 ```bash
 git clone <repository-url>
+
+cd project-root
 ```
 
-### 2. Navigate to backend folder
-
-```bash
-cd backend
-```
-### 3. Install dependencies
-
-```bash
-npm install
-```
-
-### 4. Configure environment variables
+### 2. Configure environment variables
 Create a .env file in the backend folder and add the following:
 
 ```bash
-DATABASE_URL="sqlserver://localhost:1433;database=<yourdbname>;user=<user>;password=<password>;encrypt=false;trustServerCertificate=true"
+DATABASE_URL="sqlserver://sqlserver:1433;database=<yourdbname>;user=<user>;password=<password>;encrypt=false;trustServerCertificate=true"
 NODE_ENV="development"
 PORT=5001
 ```
 Replace ```<yourdbname>```, ```<user>```, and ```<password>``` with your SQL Server database credentials.
 
-### 5. Run Prisma migrations
+### 3. Start application
+
+```bash
+docker compose up --build
+```
+### 4. Run Prisma migrations
 Prisma is used to manage the database schema.
 
 ```bash
-npx prisma migrate dev --name init
+docker compose exec backend npx prisma migrate deploy
 ```
-This will:
+This will apply migrations and generate the Prisma client used in the backend.
 
-- Apply migrations to your database
+### 5. Access the application
 
-- Generate the Prisma client used in the backend code
-
-### 6. Start the backend server and Access Swagger API documentation
-```bash
-npm run dev
-```
-The server starts on: ```http://localhost:5001```
-Swagger UI is available at ```http://localhost:5001/api-docs/```
+| Service      | URL                                                              |
+| ------------ | ---------------------------------------------------------------- |
+| Frontend     | [http://localhost:5173](http://localhost:5173)                   |
+| Backend API  | [http://localhost:5001](http://localhost:5001)                   |
+| Swagger Docs | [http://localhost:5001/api-docs](http://localhost:5001/api-docs) |
 
