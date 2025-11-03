@@ -1,0 +1,43 @@
+services:
+  frontend:
+    build: ./frontend
+    container_name: frontend
+    ports:
+      - "5173:5173"
+    working_dir: /app
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    command: ["npm", "run", "dev", "--", "--host"]
+    depends_on:
+      - backend
+    environment:
+      - VITE_API_URL=http://backend:5001
+
+  backend:
+    build: ./backend
+    container_name: backend
+    ports:
+      - "5001:5001"
+    working_dir: /app
+    volumes:
+      - /app/node_modules
+      - ./backend/uploads:/app/uploads
+    env_file: ./backend/.env
+    depends_on:
+      - sqlserver
+
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: sqlserver
+    restart: unless-stopped
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=Password123!
+    ports:
+      - "1433:1433"
+    volumes:
+      - mssql_data:/var/opt/mssql
+
+volumes:
+  mssql_data:

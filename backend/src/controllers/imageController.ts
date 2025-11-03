@@ -11,16 +11,19 @@ export const previewImage = asyncHandler(
     const { x, y, width, height } = req.body.crop;
     const image = req.file!.path;
 
+    const imageMetadata = await sharp(image).metadata();
+
     const croppedImage = await sharp(image)
       .extract({
-        left: x,
-        top: y,
-        width: width,
-        height: height,
+        left: Math.floor(x),
+        top: Math.floor(y),
+        width: Math.floor(width),
+        height: Math.floor(height),
       })
       .resize({
-        width: Math.floor(width * 0.05),
-        height: Math.floor(height * 0.05),
+        width: Math.floor(imageMetadata.width * 0.05),
+        height: Math.floor(imageMetadata.height * 0.05),
+        fit: "fill",
       })
       .png()
       .toBuffer();
@@ -57,15 +60,29 @@ export const generateImage = asyncHandler(
       : null;
 
     if (config?.logoImage) {
+      const logoWidth = Math.round(width * config.scaleDown);
+      const logoHeight = Math.round(height * config.scaleDown);
+
       const logo = await sharp(config.logoImage)
         .resize({
-          width: Math.round(width * config.scaleDown),
-          height: Math.round(height * config.scaleDown),
+          width: logoWidth,
+          height: logoHeight,
+          fit: "inside",
         })
         .toBuffer();
 
+      const gravity = gravityMap[config.logoPosition];
+
       croppedImage = await sharp(croppedImage)
-        .composite([{ input: logo, gravity: gravityMap[config.logoPosition] }])
+        .composite([
+          {
+            input: logo,
+            gravity: gravity,
+            left: 10,
+            top: 10,
+          },
+        ])
+        .png()
         .toBuffer();
     }
 
