@@ -2,7 +2,7 @@ import express from "express";
 import dotenv from "dotenv";
 import cors from "cors";
 import morgan from "morgan";
-import routes from "./routes";
+
 import { setupSwagger } from "./config/swagger";
 import imageRoutes from "./routes/imageRoutes";
 import configRoutes from "./routes/configRoutes";
@@ -26,7 +26,6 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 setupSwagger(app);
 
-app.use("/api", routes);
 app.use("/api", imageRoutes);
 app.use("/api", configRoutes);
 

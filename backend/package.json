@@ -15,14 +15,11 @@
     "@prisma/client": "^6.18.0",
     "cors": "^2.8.5",
     "dotenv": "^17.2.3",
-    "eslint": "^9.37.0",
     "express": "^5.1.0",
     "express-async-handler": "^1.2.0",
     "morgan": "^1.10.1",
     "mssql": "^12.0.0",
     "multer": "^2.0.2",
-    "open": "^10.2.0",
-    "prettier": "^3.6.2",
     "sharp": "^0.34.4",
     "swagger-jsdoc": "^3.7.0",
     "swagger-ui-express": "^5.0.1"
@@ -36,6 +33,7 @@
     "@types/node": "^24.8.1",
     "@types/swagger-jsdoc": "^6.0.4",
     "@types/swagger-ui-express": "^4.1.8",
+    "prettier": "^3.6.2",
     "prisma": "^6.18.0",
     "ts-node-dev": "^2.0.0",
     "typescript": "^5.9.3"

@@ -25,7 +25,7 @@ export function validateCrop(
       throw new AppError("Missing crop values: x, y, width, height", 400);
     }
 
-    if ([x, y, width, height].some((v) => Number(v) <= 0)) {
+    if ([x, y, width, height].some((v) => Number(v) < 0)) {
       throw new AppError("Crop values must be positive numbers", 400);
     }
 

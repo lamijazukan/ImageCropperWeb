@@ -16,6 +16,7 @@ export function validateConfiguration(
 
     if (typeof req.body.scaleDown === "string")
       req.body.scaleDown = parseFloat(req.body.scaleDown);
+
     const { scaleDown, logoPosition } = req.body;
 
     if (!isUpdate && (!scaleDown || !logoPosition || !req.file))
